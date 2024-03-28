@@ -102,20 +102,11 @@ export default class OperationTag extends React.Component {
             </div>
           }
 
-
-          <button
-            aria-expanded={showTag}
-            className="expand-operation"
-            title={showTag ? "Collapse operation" : "Expand operation"}
-            onClick={() => layoutActions.show(isShownKey, !showTag)}>
-
-            {showTag ? <ArrowUpIcon className="arrow" /> : <ArrowDownIcon className="arrow" />}
-          </button>
         </h3>
 
-        <Collapse isOpened={showTag}>
+        {/* <Collapse isOpened={showTag}> */}
           {children}
-        </Collapse>
+        {/* </Collapse> */}
       </div>
     )
   }

@@ -27,7 +27,6 @@ export default class OperationSummary extends PureComponent {
   render() {
 
     let {
-      isShown,
       toggleShown,
       getComponent,
       authActions,
@@ -51,6 +50,7 @@ export default class OperationSummary extends PureComponent {
     let {
       summary: resolvedSummary,
     } = op
+    const isShown = true
 
     let security = operationProps.get("security")
 
@@ -85,7 +85,7 @@ export default class OperationSummary extends PureComponent {
 
           {displayOperationId && (originalOperationId || operationId) ? <span className="opblock-summary-operation-id">{originalOperationId || operationId}</span> : null}
         </button>
-        <CopyToClipboardBtn textToCopy={`${specPath.get(1)}`} />
+        {/* <CopyToClipboardBtn textToCopy={`${specPath.get(1)}`} /> */}
         {
           allowAnonymous ? null :
             <AuthorizeOperationBtn
@@ -97,14 +97,14 @@ export default class OperationSummary extends PureComponent {
             />
         }
         <JumpToPath path={specPath} />{/* TODO: use wrapComponents here, swagger-ui doesn't care about jumpToPath */}
-        <button
+        {/* <button
           aria-label={`${method} ${path.replace(/\//g, "\u200b/")}`}
           className="opblock-control-arrow"
           aria-expanded={isShown}
           tabIndex="-1"
           onClick={toggleShown}>
           {isShown ? <ArrowUpIcon className="arrow" /> : <ArrowDownIcon className="arrow" />}
-        </button>
+        </button> */}
       </div>
     )
   }
