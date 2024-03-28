@@ -50,6 +50,7 @@ export default class OperationTag extends React.Component {
     const isDeepLinkingEnabled = deepLinking && deepLinking !== "false"
 
     const Collapse = getComponent("Collapse")
+    const Badge = getComponent("Badge")
     const Markdown = getComponent("Markdown", true)
     const DeepLink = getComponent("DeepLink")
     const Link = getComponent("Link")
@@ -84,9 +85,9 @@ export default class OperationTag extends React.Component {
             isShown={showTag}
             path={createDeepLinkPath(tag)}
             text={tag} />
-          <span className="text-red-500">
-          ss
-          </span>
+          <Badge>ss</Badge>
+          
+         
           {!tagDescription ? <small></small> :
             <small>
               <Markdown source={tagDescription} />
