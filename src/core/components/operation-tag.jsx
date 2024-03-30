@@ -49,13 +49,11 @@ export default class OperationTag extends React.Component {
 
     const isDeepLinkingEnabled = deepLinking && deepLinking !== "false"
 
-    const Collapse = getComponent("Collapse")
+
     const Badge = getComponent("Badge")
     const Markdown = getComponent("Markdown", true)
     const DeepLink = getComponent("DeepLink")
     const Link = getComponent("Link")
-    const ArrowUpIcon = getComponent("ArrowUpIcon")
-    const ArrowDownIcon = getComponent("ArrowDownIcon")
 
     let tagDescription = tagObj.getIn(["tagDetails", "description"], null)
     let tagExternalDocsDescription = tagObj.getIn(["tagDetails", "externalDocs", "description"])
@@ -72,45 +70,7 @@ export default class OperationTag extends React.Component {
 
     return (
       <div className={showTag ? "opblock-tag-section is-open" : "opblock-tag-section"} >
-
-        <h3
-          onClick={() => layoutActions.show(isShownKey, !showTag)}
-          className={!tagDescription ? "opblock-tag no-desc" : "opblock-tag"}
-          id={isShownKey.map(v => escapeDeepLinkPath(v)).join("-")}
-          data-tag={tag}
-          data-is-open={showTag}
-        >
-          <DeepLink
-            enabled={isDeepLinkingEnabled}
-            isShown={showTag}
-            path={createDeepLinkPath(tag)}
-            text={tag} />
-          <Badge>ss</Badge>
-          
-         
-          {!tagDescription ? <small></small> :
-            <small>
-              <Markdown source={tagDescription} />
-            </small>
-          }
-
-          {!tagExternalDocsUrl ? null :
-            <div className="info__externaldocs">
-              <small>
-                <Link
-                    href={sanitizeUrl(tagExternalDocsUrl)}
-                    onClick={(e) => e.stopPropagation()}
-                    target="_blank"
-                  >{tagExternalDocsDescription || tagExternalDocsUrl}</Link>
-              </small>
-            </div>
-          }
-
-        </h3>
-
-        {/* <Collapse isOpened={showTag}> */}
-          {children}
-        {/* </Collapse> */}
+        {children}
       </div>
     )
   }

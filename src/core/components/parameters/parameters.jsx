@@ -114,6 +114,7 @@ export default class Parameters extends Component {
 
     const ParameterRow = getComponent("parameterRow")
     const TryItOutButton = getComponent("TryItOutButton")
+    const CirclesFourDash = getComponent("CirclesFourDash")
     const ContentType = getComponent("contentType")
     const Callbacks = getComponent("Callbacks", true)
     const RequestBody = getComponent("RequestBody", true)
@@ -138,48 +139,27 @@ export default class Parameters extends Component {
     const retainRequestBodyValueFlagForOperation = (f) => oas3Actions.setRetainRequestBodyValueFlag({ value: f, pathMethod })
     return (
       <div className="opblock-section">
-        <div className="opblock-section-header">
+      
           {isOAS3 ? (
-            <div className="tab-header">
-              <div onClick={() => this.toggleTab("parameters")}
-                   className={`tab-item ${this.state.parametersVisible && "active"}`}>
-                <h4 className="opblock-title"><span>Parameters</span></h4>
+            <div className="flex items-center self-stretch gap-2">
+              <CirclesFourDash size="md" />
+              <div className="text-sm leading-5 font-semibold text-slate-700">
+                Body Params:
               </div>
-              {operation.get("callbacks") ?
-                (
-                  <div onClick={() => this.toggleTab("callbacks")}
-                       className={`tab-item ${this.state.callbackVisible && "active"}`}>
-                    <h4 className="opblock-title"><span>Callbacks</span></h4>
-                  </div>
-                ) : null
-              }
             </div>
           ) : (
-            <div className="tab-header">
-              <h4 className="opblock-title">Parameters</h4>
+            <div className="flex items-center self-stretch gap-2">
+              <CirclesFourDash size="md" />
+              <div className="text-sm leading-5 font-semibold text-slate-700">
+                Body Params:
+              </div>
             </div>
           )}
-          {allowTryItOut ? (
-            <TryItOutButton
-              isOAS3={specSelectors.isOAS3()}
-              hasUserEditedBody={oas3Selectors.hasUserEditedBody(...pathMethod)}
-              enabled={tryItOutEnabled}
-              onCancelClick={this.props.onCancelClick}
-              onTryoutClick={onTryoutClick}
-              onResetClick={() => onResetClick(pathMethod)}/>
-          ) : null}
-        </div>
         {this.state.parametersVisible ? <div className="parameters-container">
           {!groupedParametersArr.length ? <div className="opblock-description-wrapper"><p>No parameters</p></div> :
             <div className="table-container">
-              <table className="parameters">
-                <thead>
-                <tr>
-                  <th className="col_header parameters-col_name">Name</th>
-                  <th className="col_header parameters-col_description">Description</th>
-                </tr>
-                </thead>
-                <tbody>
+              
+               
                 {
                   groupedParametersArr.map((parameter, i) => (
                     <ParameterRow
@@ -200,8 +180,6 @@ export default class Parameters extends Component {
                       isExecute={isExecute} />
                   ))
                 }
-                </tbody>
-              </table>
             </div>
           }
         </div> : null}

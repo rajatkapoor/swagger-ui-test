@@ -96,32 +96,12 @@ export default class BaseLayout extends React.Component {
 
     return (
       <div className="swagger-ui">
-        <SvgAssets />
         <VersionPragmaFilter
           isSwagger2={isSwagger2}
           isOAS3={isOAS3}
           alsoShow={<Errors />}
         >
           <Errors />
-          <Row className="information-container">
-            <Col mobile={12}>
-              <InfoContainer />
-            </Col>
-          </Row>
-
-          {hasServers || hasSchemes || hasSecurityDefinitions ? (
-            <div className="scheme-container">
-              <Col className="schemes wrapper" mobile={12}>
-                {hasServers || hasSchemes ? (
-                  <div className="schemes-server-container">
-                    {hasServers ? <ServersContainer /> : null}
-                    {hasSchemes ? <SchemesContainer /> : null}
-                  </div>
-                ) : null}
-                {hasSecurityDefinitions ? <AuthorizeBtnContainer /> : null}
-              </Col>
-            </div>
-          ) : null}
 
           <FilterContainer />
 

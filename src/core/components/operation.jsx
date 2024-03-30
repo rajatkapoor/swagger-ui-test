@@ -118,7 +118,7 @@ export default class Operation extends PureComponent {
 
     return (
         <div className={deprecated ? "opblock opblock-deprecated" : isShown ? `opblock opblock-${method} is-open` : `opblock opblock-${method}`} id={escapeDeepLinkPath(isShownKey.join("-"))} >
-          <OperationSummary operationProps={operationProps} isShown={isShown} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
+          <OperationSummary operationProps={operationProps} specSelectors={specSelectors} isShown={isShown} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
             <div className="opblock-body">
               { (operation && operation.size) || operation === null ? null :
                 <RollingLoadSVG height="32px" width="32px" className="opblock-loading-animation" />
