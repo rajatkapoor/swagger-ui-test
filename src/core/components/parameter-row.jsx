@@ -269,111 +269,150 @@ export default class ParameterRow extends Component {
     }
 
     return (
-      <tr data-param-name={param.get("name")} data-param-in={param.get("in")}>
-        <td className="parameters-col_name">
-          <div className={required ? "parameter__name required" : "parameter__name"}>
-            { param.get("name") }
-            { !required ? null : <span>&nbsp;*</span> }
+      <div
+      key={param.get("name")}
+      className="flex items-start self-stretch justify-between gap-2 py-3 px-4 border-b border-solid border-slate-200"
+    >
+      <div className="">
+        <div className="flex items-baseline gap-2.5 self-stretch mb-[9px]">
+          <div className="text-sm leading-5 font-semibold text-slate-700">
+            {param.get("name")}
           </div>
-          <div className="parameter__type">
-            { type }
-            { itemType && `[${itemType}]` }
-            { format && <span className="prop-format">(${format})</span>}
+          <div className="flex gap-1 text-xs leading-4 font-normal">
+            <span className="text-slate-500">
+              {type}
+            </span>
+            {required && (
+              <span className="text-red-600">
+                required
+              </span>
+            )}
           </div>
-          <div className="parameter__in">({ param.get("in") })</div>
-          { !showCommonExtensions || !commonExt.size ? null : commonExt.entrySeq().map(([key, v]) => <ParameterExt key={`${key}-${v}`} xKey={key} xVal={v} /> )}
-          { !showExtensions || !extensions.size ? null : extensions.entrySeq().map(([key, v]) => <ParameterExt key={`${key}-${v}`} xKey={key} xVal={v} /> )}
-        </td>
-
-        <td className="parameters-col_description">
-          { param.get("description") ? <Markdown source={ param.get("description") }/> : null }
-
-          { (bodyParam || !isExecute) && isDisplayParamEnum ?
-            <Markdown className="parameter__enum" source={
-                "<i>Available values</i> : " + paramEnum.map(function(item) {
-                    return item
-                  }).toArray().join(", ")}/>
-            : null
-          }
-
-          { (bodyParam || !isExecute) && paramDefaultValue !== undefined ?
-            <Markdown className="parameter__default" source={"<i>Default value</i> : " + paramDefaultValue}/>
-            : null
-          }
-
-          { (bodyParam || !isExecute) && paramExample !== undefined ?
-            <Markdown source={"<i>Example</i> : " + paramExample}/>
-            : null
-          }
-
-          {(isFormData && !isFormDataSupported) && <div>Error: your browser does not support FormData</div>}
-
-          {
-            isOAS3 && param.get("examples") ? (
-              <section className="parameter-controls">
-                <ExamplesSelectValueRetainer
-                  examples={param.get("examples")}
-                  onSelect={this._onExampleSelect}
-                  updateValue={this.onChangeWrapper}
-                  getComponent={getComponent}
-                  defaultToFirstExample={true}
-                  currentKey={oas3Selectors.activeExamplesMember(...pathMethod, "parameters", this.getParamKey())}
-                  currentUserInputValue={value}
-                />
-              </section>
-            ) : null
-          }
-
-          { bodyParam ? null
-            : <JsonSchemaForm fn={fn}
-                              getComponent={getComponent}
-                              value={ value }
-                              required={ required }
-                              disabled={!isExecute}
-                              description={param.get("name")}
-                              onChange={ this.onChangeWrapper }
-                              errors={ paramWithMeta.get("errors") }
-                              schema={ schema }/>
-          }
-
-
-          {
-            bodyParam && schema ? <ModelExample getComponent={ getComponent }
-                                                specPath={specPath.push("schema")}
-                                                getConfigs={ getConfigs }
-                                                isExecute={ isExecute }
-                                                specSelectors={ specSelectors }
-                                                schema={ schema }
-                                                example={ bodyParam }
-                                                includeWriteOnly={ true }/>
-              : null
-          }
-
-          {
-            !bodyParam && isExecute && param.get("allowEmptyValue") ?
-            <ParameterIncludeEmpty
-              onChange={this.onChangeIncludeEmpty}
-              isIncluded={specSelectors.parameterInclusionSettingFor(pathMethod, param.get("name"), param.get("in"))}
-              isDisabled={!isEmptyValue(value)} />
-            : null
-          }
-
-          {
-            isOAS3 && param.get("examples") ? (
-              <Example
-                example={param.getIn([
-                  "examples",
-                  oas3Selectors.activeExamplesMember(...pathMethod, "parameters", this.getParamKey())
-                ])}
+        </div>
+        <div className="text-sm leading-5 font-normal text-slate-600">
+          {param.get("description")}
+        </div>
+      </div>
+              <div>
+              { bodyParam ? null
+             : <JsonSchemaForm fn={fn}
                 getComponent={getComponent}
-                getConfigs={getConfigs}
-              />
-            ) : null
-          }
+                value={ value }
+                required={ required }
+                disabled={!isExecute}
+                description={param.get("name")}
+                onChange={ this.onChangeWrapper }
+                errors={ paramWithMeta.get("errors") }
+                schema={ schema }/>
+           }
+              </div>
+           
+    </div>
+      // <tr data-param-name={param.get("name")} data-param-in={param.get("in")}>
+      //   <td className="parameters-col_name">
+      //     <div className={required ? "parameter__name required" : "parameter__name"}>
+      //       { param.get("name") }
+      //       { !required ? null : <span>&nbsp;*</span> }
+      //     </div>
+      //     <div className="parameter__type">
+      //       { type }
+      //       { itemType && `[${itemType}]` }
+      //       { format && <span className="prop-format">(${format})</span>}
+      //     </div>
+      //     <div className="parameter__in">({ param.get("in") })</div>
+      //     { !showCommonExtensions || !commonExt.size ? null : commonExt.entrySeq().map(([key, v]) => <ParameterExt key={`${key}-${v}`} xKey={key} xVal={v} /> )}
+      //     { !showExtensions || !extensions.size ? null : extensions.entrySeq().map(([key, v]) => <ParameterExt key={`${key}-${v}`} xKey={key} xVal={v} /> )}
+      //   </td>
 
-        </td>
+      //   <td className="parameters-col_description">
+      //     { param.get("description") ? <Markdown source={ param.get("description") }/> : null }
 
-      </tr>
+      //     { (bodyParam || !isExecute) && isDisplayParamEnum ?
+      //       <Markdown className="parameter__enum" source={
+      //           "<i>Available values</i> : " + paramEnum.map(function(item) {
+      //               return item
+      //             }).toArray().join(", ")}/>
+      //       : null
+      //     }
+
+      //     { (bodyParam || !isExecute) && paramDefaultValue !== undefined ?
+      //       <Markdown className="parameter__default" source={"<i>Default value</i> : " + paramDefaultValue}/>
+      //       : null
+      //     }
+
+      //     { (bodyParam || !isExecute) && paramExample !== undefined ?
+      //       <Markdown source={"<i>Example</i> : " + paramExample}/>
+      //       : null
+      //     }
+
+      //     {(isFormData && !isFormDataSupported) && <div>Error: your browser does not support FormData</div>}
+
+      //     {
+      //       isOAS3 && param.get("examples") ? (
+      //         <section className="parameter-controls">
+      //           <ExamplesSelectValueRetainer
+      //             examples={param.get("examples")}
+      //             onSelect={this._onExampleSelect}
+      //             updateValue={this.onChangeWrapper}
+      //             getComponent={getComponent}
+      //             defaultToFirstExample={true}
+      //             currentKey={oas3Selectors.activeExamplesMember(...pathMethod, "parameters", this.getParamKey())}
+      //             currentUserInputValue={value}
+      //           />
+      //         </section>
+      //       ) : null
+      //     }
+
+      //     { bodyParam ? null
+      //       : <JsonSchemaForm fn={fn}
+      //                         getComponent={getComponent}
+      //                         value={ value }
+      //                         required={ required }
+      //                         disabled={!isExecute}
+      //                         description={param.get("name")}
+      //                         onChange={ this.onChangeWrapper }
+      //                         errors={ paramWithMeta.get("errors") }
+      //                         schema={ schema }/>
+      //     }
+
+
+      //     {
+      //       bodyParam && schema ? <ModelExample getComponent={ getComponent }
+      //                                           specPath={specPath.push("schema")}
+      //                                           getConfigs={ getConfigs }
+      //                                           isExecute={ isExecute }
+      //                                           specSelectors={ specSelectors }
+      //                                           schema={ schema }
+      //                                           example={ bodyParam }
+      //                                           includeWriteOnly={ true }/>
+      //         : null
+      //     }
+
+      //     {
+      //       !bodyParam && isExecute && param.get("allowEmptyValue") ?
+      //       <ParameterIncludeEmpty
+      //         onChange={this.onChangeIncludeEmpty}
+      //         isIncluded={specSelectors.parameterInclusionSettingFor(pathMethod, param.get("name"), param.get("in"))}
+      //         isDisabled={!isEmptyValue(value)} />
+      //       : null
+      //     }
+
+      //     {
+      //       isOAS3 && param.get("examples") ? (
+      //         <Example
+      //           example={param.getIn([
+      //             "examples",
+      //             oas3Selectors.activeExamplesMember(...pathMethod, "parameters", this.getParamKey())
+      //           ])}
+      //           getComponent={getComponent}
+      //           getConfigs={getConfigs}
+      //         />
+      //       ) : null
+      //     }
+
+      //   </td>
+
+      // </tr>
     )
 
   }

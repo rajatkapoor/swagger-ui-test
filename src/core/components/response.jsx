@@ -2,6 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import ImPropTypes from "react-immutable-proptypes"
 import cx from "classnames"
+import cn from "clsx";
 import { fromJS, Seq, Iterable, List, Map } from "immutable"
 import { getExtensions, fromJSOrdered, stringify } from "core/utils"
 import { getKnownSyntaxHighlighterLanguage } from "core/utils/jsonParse"
@@ -105,6 +106,8 @@ export default class Response extends React.Component {
     const ContentType = getComponent("contentType")
     const ExamplesSelect = getComponent("ExamplesSelect")
     const Example = getComponent("Example")
+    const IconButton = getComponent("IconButton")
+    const ArrowUpRight = getComponent("ArrowUpRight")
 
 
     var schema, specPathWithPossibleSchema
@@ -160,6 +163,13 @@ export default class Response extends React.Component {
       }
     }
 
+    const getResponseStatusColor = (responseCode) => {
+      // TOCHECK: bg-green-500 not working
+      return responseCode >= 200 && responseCode < 300
+        ? `bg-[#22C55E]`
+        : `bg-[#DC2626]`
+    }
+
     const sampleResponse = getSampleSchema(
       sampleSchema,
       activeContentType,
@@ -170,103 +180,132 @@ export default class Response extends React.Component {
     const example = getExampleComponent( sampleResponse, HighlightCode, getConfigs )
 
     return (
-      <tr className={ "response " + ( className || "") } data-code={code}>
-        <td className="response-col_status">
-          { code }
-        </td>
-        <td className="response-col_description">
+      <div
+      key={code}
+      className="flex items-center justify-between self-stretch py-3 px-4 border-bottom border-solid border-slate-200"
+    >
+      <div className="flex items-center gap-1">
+        <div className="p-1">
+          <div
+            className={cn(
+              "w-3 h-3 rounded-xl",
+              getResponseStatusColor(
+                Number(code)
+              )
+            )}
+          />
+        </div>
+        <div className="text-sm leading-5 font-semibold text-slate-700">
+          {code}
+        </div>
+      </div>
+      <IconButton
+        onClick={() =>
+          console.log(
+            "Clicked on responses"
+          )
+        }
+        size="md"
+        Icon={ArrowUpRight}
+      />
+    </div>
+      // <tr className={ "response " + ( className || "") } data-code={code}>
+      //   <td className="response-col_status">
+      //     { code }
+      //   </td>
+      //   <td className="response-col_description">
 
-          <div className="response-col_description__inner">
-            <Markdown source={ response.get( "description" ) } />
-          </div>
+      //     <div className="response-col_description__inner">
+      //       <Markdown source={ response.get( "description" ) } />
+      //     </div>
 
-          { !showExtensions || !extensions.size ? null : extensions.entrySeq().map(([key, v]) => <ResponseExtension key={`${key}-${v}`} xKey={key} xVal={v} /> )}
+      //     { !showExtensions || !extensions.size ? null : extensions.entrySeq().map(([key, v]) => <ResponseExtension key={`${key}-${v}`} xKey={key} xVal={v} /> )}
 
-          {isOAS3 && response.get("content") ? (
-            <section className="response-controls">
-              <div
-                className={cx("response-control-media-type", {
-                  "response-control-media-type--accept-controller": controlsAcceptHeader
-                })}
-              >
-                <small className="response-control-media-type__title">
-                  Media type
-                </small>
-                <ContentType
-                  value={this.state.responseContentType}
-                  contentTypes={
-                    response.get("content")
-                      ? response.get("content").keySeq()
-                      : Seq()
-                  }
-                  onChange={this._onContentTypeChange}
-                  ariaLabel="Media Type"
-                />
-                {controlsAcceptHeader ? (
-                  <small className="response-control-media-type__accept-message">
-                    Controls <code>Accept</code> header.
-                  </small>
-                ) : null}
-              </div>
-              {examplesForMediaType ? (
-                <div className="response-control-examples">
-                  <small className="response-control-examples__title">
-                    Examples
-                  </small>
-                  <ExamplesSelect
-                    examples={examplesForMediaType}
-                    currentExampleKey={this.getTargetExamplesKey()}
-                    onSelect={key =>
-                      oas3Actions.setActiveExamplesMember({
-                        name: key,
-                        pathMethod: [path, method],
-                        contextType: "responses",
-                        contextName: code
-                      })
-                    }
-                    showLabels={false}
-                  />
-                </div>
-              ) : null}
-            </section>
-          ) : null}
+      //     {isOAS3 && response.get("content") ? (
+      //       <section className="response-controls">
+      //         <div
+      //           className={cx("response-control-media-type", {
+      //             "response-control-media-type--accept-controller": controlsAcceptHeader
+      //           })}
+      //         >
+      //           <small className="response-control-media-type__title">
+      //             Media type
+      //           </small>
+      //           <ContentType
+      //             value={this.state.responseContentType}
+      //             contentTypes={
+      //               response.get("content")
+      //                 ? response.get("content").keySeq()
+      //                 : Seq()
+      //             }
+      //             onChange={this._onContentTypeChange}
+      //             ariaLabel="Media Type"
+      //           />
+      //           {controlsAcceptHeader ? (
+      //             <small className="response-control-media-type__accept-message">
+      //               Controls <code>Accept</code> header.
+      //             </small>
+      //           ) : null}
+      //         </div>
+      //         {examplesForMediaType ? (
+      //           <div className="response-control-examples">
+      //             <small className="response-control-examples__title">
+      //               Examples
+      //             </small>
+      //             <ExamplesSelect
+      //               examples={examplesForMediaType}
+      //               currentExampleKey={this.getTargetExamplesKey()}
+      //               onSelect={key =>
+      //                 oas3Actions.setActiveExamplesMember({
+      //                   name: key,
+      //                   pathMethod: [path, method],
+      //                   contextType: "responses",
+      //                   contextName: code
+      //                 })
+      //               }
+      //               showLabels={false}
+      //             />
+      //           </div>
+      //         ) : null}
+      //       </section>
+      //     ) : null}
 
-          { example || schema ? (
-            <ModelExample
-              specPath={specPathWithPossibleSchema}
-              getComponent={ getComponent }
-              getConfigs={ getConfigs }
-              specSelectors={ specSelectors }
-              schema={ fromJSOrdered(schema) }
-              example={ example }
-              includeReadOnly={ true }/>
-          ) : null }
+      //     { example || schema ? (
+      //       <ModelExample
+      //         specPath={specPathWithPossibleSchema}
+      //         getComponent={ getComponent }
+      //         getConfigs={ getConfigs }
+      //         specSelectors={ specSelectors }
+      //         schema={ fromJSOrdered(schema) }
+      //         example={ example }
+      //         includeReadOnly={ true }/>
+      //     ) : null }
 
-          { isOAS3 && examplesForMediaType ? (
-              <Example
-                example={examplesForMediaType.get(this.getTargetExamplesKey(), Map({}))}
-                getComponent={getComponent}
-                getConfigs={getConfigs}
-                omitValue={true}
-              />
-          ) : null}
+      //     { isOAS3 && examplesForMediaType ? (
+      //         <Example
+      //           example={examplesForMediaType.get(this.getTargetExamplesKey(), Map({}))}
+      //           getComponent={getComponent}
+      //           getConfigs={getConfigs}
+      //           omitValue={true}
+      //         />
+      //     ) : null}
 
-          { headers ? (
-            <Headers
-              headers={ headers }
-              getComponent={ getComponent }
-            />
-          ) : null}
+      //     { headers ? (
+      //       <Headers
+      //         headers={ headers }
+      //         getComponent={ getComponent }
+      //       />
+      //     ) : null}
 
-        </td>
-        {isOAS3 ? <td className="response-col_links">
-          { links ?
-            links.toSeq().entrySeq().map(([key, link]) => {
-              return <OperationLink key={key} name={key} link={ link } getComponent={getComponent}/>
-            })
-          : <i>No links</i>}
-        </td> : null}
-      </tr>
+      //   </td>
+      //   {isOAS3 ? <td className="response-col_links">
+      //     { links ?
+      //       links.toSeq().entrySeq().map(([key, link]) => {
+      //         return <OperationLink key={key} name={key} link={ link } getComponent={getComponent}/>
+      //       })
+      //     : <i>No links</i>}
+      //   </td> : null}
+      // </tr>
     )
   }
 }

@@ -138,9 +138,8 @@ export default class Parameters extends Component {
 
     const retainRequestBodyValueFlagForOperation = (f) => oas3Actions.setRetainRequestBodyValueFlag({ value: f, pathMethod })
     return (
-      <div className="opblock-section">
-      
-          {isOAS3 ? (
+      <div>
+         {isOAS3 ? (
             <div className="flex items-center self-stretch gap-2">
               <CirclesFourDash size="md" />
               <div className="text-sm leading-5 font-semibold text-slate-700">
@@ -155,9 +154,10 @@ export default class Parameters extends Component {
               </div>
             </div>
           )}
-        {this.state.parametersVisible ? <div className="parameters-container">
+        <div className="flex flex-col items-start self-stretch gap-2">
+       
           {!groupedParametersArr.length ? <div className="opblock-description-wrapper"><p>No parameters</p></div> :
-            <div className="table-container">
+            <div className="flex flex-col py-2 px-0 items-start self-stretch bg-slate-50 border border-solid border-slate-200 last:border-0 rounded-xl">
               
                
                 {
@@ -182,7 +182,7 @@ export default class Parameters extends Component {
                 }
             </div>
           }
-        </div> : null}
+       
 
         {this.state.callbackVisible ? <div className="callbacks-container opblock-description-wrapper">
           <Callbacks
@@ -256,6 +256,7 @@ export default class Parameters extends Component {
             </div>
           </div>
         }
+        </div>
       </div>
     )
   }
