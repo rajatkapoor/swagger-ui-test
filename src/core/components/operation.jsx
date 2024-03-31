@@ -63,8 +63,8 @@ export default class Operation extends PureComponent {
       oas3Actions,
       oas3Selectors
     } = this.props
+    const { showMutatedRequest, requestSnippetsEnabled } = getConfigs()
     let operationProps = this.props.operation
-
     let {
       deprecated,
       path,
@@ -77,6 +77,14 @@ export default class Operation extends PureComponent {
       tryItOutEnabled,
       executeInProgress
     } = operationProps.toJS()
+    console.log("path: ", path)
+    console.log("method: ", method)
+    console.log("specSelectors: ", specSelectors)
+    console.log("showMutatedRequest: ", showMutatedRequest)
+    const curlRequest = false ? specSelectors.mutatedRequestFor(path, method) : specSelectors.requestFor(path, method)
+    console.log("curlRequest: ", curlRequest)
+
+    
     const isShown = true
     let {
       description,
@@ -103,7 +111,11 @@ export default class Operation extends PureComponent {
     const OperationExt = getComponent( "OperationExt" )
     const OperationSummary = getComponent( "OperationSummary" )
     const Link = getComponent( "Link" )
-
+    const RequestSnippets = getComponent("RequestSnippets", true)
+    const Curl = getComponent("curl")
+    console.log("Curl: ", Curl)
+    console.log("RequestSnippets: ", RequestSnippets)
+    console.log("requestSnippetsEnabled: ", requestSnippetsEnabled)
     const { showExtensions } = getConfigs()
 
     // Merge in Live Response
@@ -117,8 +129,8 @@ export default class Operation extends PureComponent {
     const validationErrors = specSelectors.validationErrors([path, method])
 
     return (
-        <div className="flex flex-col mb-10" id={escapeDeepLinkPath(isShownKey.join("-"))} >
-          <div className="flex flex-col items-center pr-6 pl-8 gap-11">
+        <div className="flex mb-10" id={escapeDeepLinkPath(isShownKey.join("-"))} >
+          <div className="flex flex-col items-center pr-6 pl-8 gap-11 w-[60%]">
             <div className="flex flex-col gap-8 items-center self-stretch">
               <OperationSummary operationProps={operationProps} specSelectors={specSelectors} isShown={isShown} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
               <div className="flex flex-col items-start self-stretch gap-7">
@@ -220,27 +232,17 @@ export default class Operation extends PureComponent {
                   </div>
                 }
 
-              <div className={(!tryItOutEnabled || !response || !allowTryItOut) ? "execute-wrapper" : "btn-group"}>
-                { !tryItOutEnabled || !allowTryItOut ? null :
-
-                    <Execute
-                      operation={ operation }
-                      specActions={ specActions }
-                      specSelectors={ specSelectors }
-                      oas3Selectors={ oas3Selectors }
-                      oas3Actions={ oas3Actions }
-                      path={ path }
-                      method={ method }
-                      onExecute={ onExecute }
-                      disabled={executeInProgress}/>
-                }
-
-                { (!tryItOutEnabled || !response || !allowTryItOut) ? null :
-                    <Clear
-                      specActions={ specActions }
-                      path={ path }
-                      method={ method }/>
-                }
+              <div className="btn-group">
+                <Execute
+                  operation={ operation }
+                  specActions={ specActions }
+                  specSelectors={ specSelectors }
+                  oas3Selectors={ oas3Selectors }
+                  oas3Actions={ oas3Actions }
+                  path={ path }
+                  method={ method }
+                  onExecute={ onExecute }
+                  disabled={executeInProgress}/>
               </div>
 
               {executeInProgress ? <div className="loading-container"><div className="loading"></div></div> : null}
@@ -252,6 +254,11 @@ export default class Operation extends PureComponent {
                 }
               </div>
             </div>
+          </div>
+          <div className="w-[40%]">
+          { curlRequest && (requestSnippetsEnabled === true || requestSnippetsEnabled === "true"
+          ? <RequestSnippets request={ curlRequest }/>
+          : <Curl request={ curlRequest } getConfigs={ getConfigs } />) }
           </div>
         </div>
     )

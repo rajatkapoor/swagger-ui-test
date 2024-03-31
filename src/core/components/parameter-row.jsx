@@ -299,7 +299,7 @@ export default class ParameterRow extends Component {
                 getComponent={getComponent}
                 value={ value }
                 required={ required }
-                disabled={!isExecute}
+                disabled={false}
                 description={param.get("name")}
                 onChange={ this.onChangeWrapper }
                 errors={ paramWithMeta.get("errors") }
