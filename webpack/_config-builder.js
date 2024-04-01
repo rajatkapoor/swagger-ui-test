@@ -126,6 +126,11 @@ function buildConfig(
         fallback: {
           fs: false,
           stream: require.resolve("stream-browserify"),
+          querystring: require.resolve("querystring-es3"),
+          url: require.resolve("url"),
+          util: require.resolve("util"),
+          https: require.resolve("https-browserify"),
+          http: require.resolve("stream-http"),
         },
       },
 

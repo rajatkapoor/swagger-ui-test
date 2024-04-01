@@ -4,7 +4,7 @@ import { Iterable, List } from "immutable"
 import ImPropTypes from "react-immutable-proptypes"
 import toString from "lodash/toString"
 
-const getCompleteApiUrl = (
+export const getCompleteApiUrl = (
   host,
   basePath,
   relativePath
@@ -57,10 +57,10 @@ export default class OperationSummary extends PureComponent {
     } = op
 
     return (
-      
+
            <div className="flex flex-col gap-4 items-center self-stretch">
               <div
-                
+
                 className="flex flex-col gap-2 text-4xl font-bold leading-[44px] text-slate-800 self-stretch"
               >
                  {toString(resolvedSummary || summary)}
@@ -78,7 +78,7 @@ export default class OperationSummary extends PureComponent {
                 </div>
               </div>
             </div>
-     
+
     )
   }
 }

@@ -1,12 +1,41 @@
-import React, { PureComponent } from "react"
+import React, { PureComponent, useEffect } from "react"
 import PropTypes from "prop-types"
 import { getList } from "core/utils"
 import { getExtensions, sanitizeUrl, escapeDeepLinkPath } from "core/utils"
 import { safeBuildUrl } from "core/utils/url"
 import { Iterable, List } from "immutable"
 import ImPropTypes from "react-immutable-proptypes"
+import Oas from "oas"
+import oasToHar from "@readme/oas-to-har"
+import { HTTPSnippet } from "httpsnippet"
 
-import RollingLoadSVG from "core/assets/rolling-load.svg"
+
+
+import petstore from "./petstore.json"
+
+function expandObjectKeys(obj) {
+  const result = {}
+
+  for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+          const keys = key.split(".")
+          let current = result
+
+          for (let i = 0; i < keys.length; i++) {
+              const k = keys[i]
+              if (i === keys.length - 1) {
+                  current[k] = obj[key]
+              } else {
+                  current[k] = current[k] || {}
+                  current = current[k]
+              }
+          }
+      }
+  }
+
+  return result
+}
+
 
 export default class Operation extends PureComponent {
   static propTypes = {
@@ -81,15 +110,15 @@ export default class Operation extends PureComponent {
     console.log("method: ", method)
     console.log("specSelectors: ", specSelectors)
     console.log("showMutatedRequest: ", showMutatedRequest)
-    const curlRequest = false ? specSelectors.mutatedRequestFor(path, method) : specSelectors.requestFor(path, method)
-    console.log("curlRequest: ", curlRequest)
+    const curlRequest = specSelectors.requestFor(path, method)
 
-    
+
+
     const isShown = true
     let {
       description,
       externalDocs,
-      schemes
+      schemes,
     } = op
 
     const externalDocsUrl = externalDocs ? safeBuildUrl(externalDocs.url, specSelectors.url(), { selectedServer: oas3Selectors.selectedServer() }) : ""
@@ -101,39 +130,72 @@ export default class Operation extends PureComponent {
     let extensions = getExtensions(operation)
 
     const Responses = getComponent("responses")
-    const Parameters = getComponent( "parameters" )
-    const Execute = getComponent( "execute" )
-    const Clear = getComponent( "clear" )
-    const Collapse = getComponent( "Collapse" )
+    const Parameters = getComponent("parameters")
+    const Execute = getComponent("execute")
+    const Clear = getComponent("clear")
+    const Collapse = getComponent("Collapse")
     const Markdown = getComponent("Markdown", true)
-    const Schemes = getComponent( "schemes" )
-    const OperationServers = getComponent( "OperationServers" )
-    const OperationExt = getComponent( "OperationExt" )
-    const OperationSummary = getComponent( "OperationSummary" )
-    const Link = getComponent( "Link" )
+    const Schemes = getComponent("schemes")
+    const OperationServers = getComponent("OperationServers")
+    const OperationExt = getComponent("OperationExt")
+    const OperationSummary = getComponent("OperationSummary")
+    const Link = getComponent("Link")
     const RequestSnippets = getComponent("RequestSnippets", true)
     const Curl = getComponent("curl")
-    console.log("Curl: ", Curl)
-    console.log("RequestSnippets: ", RequestSnippets)
-    console.log("requestSnippetsEnabled: ", requestSnippetsEnabled)
+
+
     const { showExtensions } = getConfigs()
     let { requestContentType, responseContentType } = specSelectors.contentTypeValues([path, method]).toJS()
     let isXml = /xml/i.test(requestContentType)
     let parametersVar = specSelectors.parameterValues([path, method], isXml).toJS()
-    console.log("parametersVar: ", parametersVar)
-      // Merge in Live Response
-    if(responses && response && response.size > 0) {
+    // Merge in Live Response
+    if (responses && response && response.size > 0) {
       let notDocumented = !responses.get(String(response.get("status"))) && !responses.get("default")
       response = response.set("notDocumented", notDocumented)
     }
 
-    let onChangeKey = [ path, method ] // Used to add values to _this_ operation ( indexed by path and method )
+    let onChangeKey = [path, method] // Used to add values to _this_ operation ( indexed by path and method )
+
 
     const validationErrors = specSelectors.validationErrors([path, method])
 
+
+    let params = expandObjectKeys(parametersVar)
+    params = {
+      ...params,
+      body: params.formData,
+    }
+
+    const spec = new Oas(petstore)
+    const oasOp = spec.operation(path, method)
+
+    // useEffect(async () => {
+    //   const def = await oas.validate()
+    //   const newOas = new Oas(def)
+    //   const har = oasToHar(newOas, oasOp, params)
+    //   console.log(`🚀 INTERNAL HAR: ${path} ${method}}`, { path, params, har })
+
+
+
+
+    // }, [parametersVar, path, method])
+
+
+    const isMP = oasOp.isMultipart()
+    const isjson = oasOp.isJson()
+
+    const har = oasToHar(spec, oasOp, params)
+    console.log(`🚀 HAR: ${path} ${method}}`, { path, params,  har , isMP, isjson})
+
+
+    const snippet = new HTTPSnippet(har.log.entries[0].request)
+    const options = { indent: "\t" }
+    const output = snippet.convert("node", undefined, options)
+
+
     return (
-        <div className="flex mb-10" id={escapeDeepLinkPath(isShownKey.join("-"))} >
-          <div className="flex flex-col items-center pr-6 pl-8 gap-11 w-[60%]">
+        <div className="flex mb-10 grid grid-cols-3" id={escapeDeepLinkPath(isShownKey.join("-"))} >
+          <div className="flex flex-col items-center pr-6 pl-8 gap-11 col-span-2">
             <div className="flex flex-col gap-8 items-center self-stretch">
               <OperationSummary operationProps={operationProps} specSelectors={specSelectors} isShown={isShown} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
               <div className="flex flex-col items-start self-stretch gap-7">
@@ -201,7 +263,7 @@ export default class Operation extends PureComponent {
                       fn={fn} />
                 }
                 </div>
-               
+
 
                 { !tryItOutEnabled ? null :
                   <OperationServers
@@ -250,7 +312,7 @@ export default class Operation extends PureComponent {
 
               {executeInProgress ? <div className="loading-container"><div className="loading"></div></div> : null}
 
-               
+
 
                 { !showExtensions || !extensions.size ? null :
                   <OperationExt extensions={ extensions } getComponent={ getComponent } />
@@ -258,10 +320,39 @@ export default class Operation extends PureComponent {
               </div>
             </div>
           </div>
-          <div className="w-[40%]">
-          { curlRequest && (requestSnippetsEnabled === true || requestSnippetsEnabled === "true"
+           <div className="col-span-1 flex flex-col">
+          <div>
+
+
+            <pre>
+
+            {JSON.stringify({
+              parametersVar,
+              path, method
+            })}
+              </pre>
+          </div>
+          <div>
+            <pre>
+
+            {JSON.stringify({
+              har
+            })}
+
+            </pre>
+          </div>
+          <div>
+            <pre>
+
+            {output}
+
+            </pre>
+          </div>
+
+
+          {/* { curlRequest && (requestSnippetsEnabled === true || requestSnippetsEnabled === "true"
           ? <RequestSnippets request={ curlRequest }/>
-          : <Curl request={ curlRequest } getConfigs={ getConfigs } />) }
+          : <Curl request={ curlRequest } getConfigs={ getConfigs } />) } */}
           </div>
         </div>
     )

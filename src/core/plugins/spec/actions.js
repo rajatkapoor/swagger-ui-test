@@ -451,6 +451,7 @@ export const executeRequest = (req) =>
 
     let parsedRequest = Object.assign({}, req)
     parsedRequest = fn.buildRequest(parsedRequest)
+    console.log("🚀 ~ parsedRequest:", parsedRequest)
 
     specActions.setRequest(req.pathName, req.method, parsedRequest)
 
