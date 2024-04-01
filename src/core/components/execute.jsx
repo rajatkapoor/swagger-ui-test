@@ -63,6 +63,7 @@ export default class Execute extends Component {
       // loading spinner
       this.props.onExecute()
     }
+    console.log("operation: ", operation);
     specActions.execute({ operation, path, method })
   }
 

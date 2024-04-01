@@ -496,7 +496,7 @@ export const execute = ( { path, method, ...extras }={} ) => (system) => {
   let { requestContentType, responseContentType } = specSelectors.contentTypeValues([path, method]).toJS()
   let isXml = /xml/i.test(requestContentType)
   let parameters = specSelectors.parameterValues([path, method], isXml).toJS()
-
+  console.log("parameters: ", parameters)
   return specActions.executeRequest({
     ...extras,
     fetch,

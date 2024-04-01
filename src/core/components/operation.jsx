@@ -117,8 +117,11 @@ export default class Operation extends PureComponent {
     console.log("RequestSnippets: ", RequestSnippets)
     console.log("requestSnippetsEnabled: ", requestSnippetsEnabled)
     const { showExtensions } = getConfigs()
-
-    // Merge in Live Response
+    let { requestContentType, responseContentType } = specSelectors.contentTypeValues([path, method]).toJS()
+    let isXml = /xml/i.test(requestContentType)
+    let parametersVar = specSelectors.parameterValues([path, method], isXml).toJS()
+    console.log("parametersVar: ", parametersVar)
+      // Merge in Live Response
     if(responses && response && response.size > 0) {
       let notDocumented = !responses.get(String(response.get("status"))) && !responses.get("default")
       response = response.set("notDocumented", notDocumented)
