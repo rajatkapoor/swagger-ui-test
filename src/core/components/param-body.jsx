@@ -121,11 +121,12 @@ export default class ParamBody extends PureComponent {
 
     const regionId = createHtmlReadyId(`${pathMethod[1]}${pathMethod[0]}_parameters`)
     const controlId = `${regionId}_select`
-
+    console.log("isExecute: ", isExecute)
+    console.log("isEditBox: ", isEditBox)
     return (
       <div className="body-param" data-param-name={param.get("name")} data-param-in={param.get("in")}>
         {
-          isEditBox && isExecute
+          isEditBox
             ? <TextArea className={ "body-param__text" + ( errors.count() ? " invalid" : "")} value={value} onChange={ this.handleOnChange }/>
             : (value && <HighlightCode className="body-param__example"
                           language={ language }
@@ -133,14 +134,14 @@ export default class ParamBody extends PureComponent {
                           value={ value }/>)
         }
         <div className="body-param-options">
-          {
-            !isExecute ? null
-                       : <div className="body-param-edit">
-                        <Button className={isEditBox ? "btn cancel body-param__example-edit" : "btn edit body-param__example-edit"}
-                                 onClick={this.toggleIsEditBox}>{ isEditBox ? "Cancel" : "Edit"}
-                         </Button>
-                         </div>
-          }
+          
+            
+          <div className="body-param-edit">
+              <Button className={isEditBox ? "btn cancel body-param__example-edit" : "btn edit body-param__example-edit"}
+                onClick={this.toggleIsEditBox}>{ isEditBox ? "Cancel" : "Edit"}
+              </Button>
+          </div>
+          
           <label htmlFor={controlId}>
             <span>Parameter content type</span>
             <ContentType

@@ -194,8 +194,8 @@ export default class Operation extends PureComponent {
 
 
     return (
-        <div className="flex mb-10 grid grid-cols-3" id={escapeDeepLinkPath(isShownKey.join("-"))} >
-          <div className="flex flex-col items-center pr-6 pl-8 gap-11 col-span-2">
+        <div className="flex mb-10" id={escapeDeepLinkPath(isShownKey.join("-"))} >
+          <div className="flex flex-col items-center pr-6 pl-8 gap-11 break-all flex-auto overflow-wrap-normal min-w-0 max-w-[800px]">
             <div className="flex flex-col gap-8 items-center self-stretch">
               <OperationSummary operationProps={operationProps} specSelectors={specSelectors} isShown={isShown} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
               <div className="flex flex-col items-start self-stretch gap-7">
@@ -320,16 +320,13 @@ export default class Operation extends PureComponent {
               </div>
             </div>
           </div>
-           <div className="col-span-1 flex flex-col">
-          <div>
-
-
-            <pre>
-
-            {JSON.stringify({
-              parametersVar,
-              path, method
-            })}
+          <div className="flex flex-shrink-0 flex-grow-0 w-[480px] flex-col max-w-[480px] relative">
+            <div>
+              <pre>
+                {JSON.stringify({
+                  parametersVar,
+                  path, method
+                })}
               </pre>
           </div>
           <div>
@@ -348,11 +345,6 @@ export default class Operation extends PureComponent {
 
             </pre>
           </div>
-
-
-          {/* { curlRequest && (requestSnippetsEnabled === true || requestSnippetsEnabled === "true"
-          ? <RequestSnippets request={ curlRequest }/>
-          : <Curl request={ curlRequest } getConfigs={ getConfigs } />) } */}
           </div>
         </div>
     )

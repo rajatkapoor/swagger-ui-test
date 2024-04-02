@@ -92,7 +92,12 @@ export default class Responses extends React.Component {
 
     return (
       <div className="flex flex-col gap-2">
-
+        <div className="flex items-center self-stretch gap-2">
+          <ArrowCircleRight size="md" />
+          <div className="text-sm leading-5 font-semibold text-slate-700">
+            Responses
+          </div>
+        </div>
         <div className="flex flex-col items-start self-stretch py-2 px-0 border border-solid border-slate-200 rounded-xl">
           {
             !tryItOutResponse ? null
@@ -108,12 +113,7 @@ export default class Responses extends React.Component {
 
           }
 
-          <div className="flex items-center self-stretch gap-2">
-            <ArrowCircleRight size="md" />
-            <div className="text-sm leading-5 font-semibold text-slate-700">
-              Responses
-            </div>
-          </div>
+        
           {
             responses.entrySeq().map( ([code, response]) => {
 

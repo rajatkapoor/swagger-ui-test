@@ -120,6 +120,7 @@ export default class Parameters extends Component {
     const RequestBody = getComponent("RequestBody", true)
 
     const isExecute = tryItOutEnabled && allowTryItOut
+    console.log("Inside parameters: tryItOutEnabled", tryItOutEnabled, " allowTryItOut: ", allowTryItOut, " isExecute: ", isExecute)
     const isOAS3 = specSelectors.isOAS3()
 
     const regionId = createHtmlReadyId(`${pathMethod[1]}${pathMethod[0]}_requests`)
