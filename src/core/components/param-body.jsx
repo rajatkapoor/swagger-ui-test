@@ -49,6 +49,7 @@ export default class ParamBody extends PureComponent {
 
   updateValues = (props) => {
     let { param, isExecute, consumesValue="" } = props
+    console.log("Inside updateValues: isExecute: ", isExecute, " param: ", param)
     let isXml = /xml/i.test(consumesValue)
     let isJson = /json/i.test(consumesValue)
     let paramValue = isXml ? param.get("value_xml") : param.get("value")
@@ -56,12 +57,14 @@ export default class ParamBody extends PureComponent {
     if ( paramValue !== undefined ) {
       let val = !paramValue && isJson ? "{}" : paramValue
       this.setState({ value: val })
-      this.onChange(val, {isXml: isXml, isEditBox: isExecute})
+      this.onChange(val, {isXml: isXml})
     } else {
       if (isXml) {
-        this.onChange(this.sample("xml"), {isXml: isXml, isEditBox: isExecute})
+        this.onChange(this.sample("xml"), {isXml: isXml})
       } else {
-        this.onChange(this.sample(), {isEditBox: isExecute})
+        this.onChange(this.sample(), {
+          // isEditBox: isExecute
+        })
       }
     }
   }
@@ -76,7 +79,8 @@ export default class ParamBody extends PureComponent {
   }
 
   onChange = (value, { isEditBox, isXml }) => {
-    this.setState({value, isEditBox})
+    console.log("Inside onChange in param-body: isEditBox: ", isEditBox, " isXml: ", isXml)
+    this.setState({value})
     this._onChange(value, isXml)
   }
 
@@ -86,6 +90,7 @@ export default class ParamBody extends PureComponent {
     const {consumesValue} = this.props
     const isXml = /xml/i.test(consumesValue)
     const inputValue = e.target.value
+    console.log("Inside handleOnChange in param-body: this.state.isEditBox: ", this.state.isEditBox, " isXml: ", isXml)
     this.onChange(inputValue, {isXml, isEditBox: this.state.isEditBox})
   }
 
